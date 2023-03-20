@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/EmiliaReact.iml" filepath="$PROJECT_DIR$/.idea/EmiliaReact.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/GPTReact.iml" filepath="$PROJECT_DIR$/.idea/GPTReact.iml" />
     </modules>
   </component>
 </project>
