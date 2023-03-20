@@ -106,7 +106,6 @@ async def get_emojis_and_weight(message):
 async def on_message(message):
     global threshold
     global last_api_call_time
-    global OPENAI_API_KEY
 
     if message.author == bot.user:
         return
@@ -114,40 +113,41 @@ async def on_message(message):
     if message.content.startswith(bot.command_prefix):
         await bot.process_commands(message)
     else:
-        # Check if an API key has been set
-        if not OPENAI_API_KEY:
-            return
-
         # Check if the message is cached and recent
         if await is_message_cached_and_recent(message):
             return
 
-        # Check if the cooldown period has passed since the last API call
-        now = datetime.now()
-        if last_api_call_time is not None and (now - last_api_call_time).total_seconds() < cooldown_duration:
-            print("Skipping API call due to cooldown")
-            return
+    # Check if the API key is set
+    if not OPENAI_API_KEY:
+        await message.channel.send("OpenAI API key is not set. Please set it using the !apikey command in a DM to the bot.")
+        return
 
-        emojis, weight = await get_emojis_and_weight(message)
+    # Check if the cooldown period has passed since the last API call
+    now = datetime.now()
+    if last_api_call_time is not None and (now - last_api_call_time).total_seconds() < cooldown_duration:
+        print("Skipping API call due to cooldown")
+        return
 
-        print(f"Emojis: {emojis}")
-        print(f"Weight: {weight}")
+    emojis, weight = await get_emojis_and_weight(message)
 
-        emoji_reacted = False
-        if weight >= (6 - threshold):
-            for emoji_text in emojis:
-                emoji_unicode = emoji.emojize(emoji_text)
-                try:
-                    await message.add_reaction(emoji_unicode)
-                    await asyncio.sleep(0.5)  # Add a short delay between reactions
-                    emoji_reacted = True
-                except discord.errors.HTTPException:
-                    print(f"Unknown or invalid emoji: {emoji_unicode}")
-                    continue
+    print(f"Emojis: {emojis}")
+    print(f"Weight: {weight}")
 
-        # Update the last_api_call_time only if an emoji was successfully reacted
-        if emoji_reacted:
-            last_api_call_time = now
+    emoji_reacted = False
+    if weight >= (6 - threshold):
+        for emoji_text in emojis:
+            emoji_unicode = emoji.emojize(emoji_text)
+            try:
+                await message.add_reaction(emoji_unicode)
+                await asyncio.sleep(0.5)  # Add a short delay between reactions
+                emoji_reacted = True
+            except discord.errors.HTTPException:
+                print(f"Unknown or invalid emoji: {emoji_unicode}")
+                continue
+
+    # Update the last_api_call_time only if an emoji was successfully reacted
+    if emoji_reacted:
+        last_api_call_time = now
 
 
 @bot.command(name="ratelimit")
