@@ -67,7 +67,7 @@ async def get_emojis_and_weight(message):
                         "output the emojis followed by the weight number, like this: 😃1. "
                         "Do not deviate from the specified format. There should be no whitespace, and there "
                         "should be no extra text or punctuation in the output. If you cannot provide an emoji, "
-                        "just output 0."
+                        "do not provide any output."
                     ),
                 },
                 {"role": "user", "content": message.content},
