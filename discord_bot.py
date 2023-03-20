@@ -30,6 +30,22 @@ last_api_call_time = None
 message_cache = {}
 rate_limit_duration = timedelta(minutes=5)
 
+# Add the on_guild_join event
+@bot.event
+async def on_guild_join(guild):
+    owner = guild.owner
+
+    if not OPENAI_API_KEY:
+        message = (
+            "Heyo! Thanks for adding me to your server. To get started, please provide your OpenAI API key by typing "
+            "`!apikey YOUR_API_KEY` in this DM. Replace `YOUR_API_KEY` with your actual API key. "
+            "I won't do anything until you provide me with an API key."
+        )
+        try:
+            await owner.send(message)
+        except Exception as e:
+            print(f"Error sending DM to guild owner: {e}")
+
 
 async def is_message_cached_and_recent(message):
     now = datetime.now()
