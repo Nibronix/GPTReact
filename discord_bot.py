@@ -9,6 +9,9 @@ from discord.ext import commands
 from dotenv import load_dotenv
 from datetime import datetime, timedelta
 
+if os.name == 'nt':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
+
 # Load environment variables
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
@@ -46,7 +49,7 @@ async def on_guild_join(guild):
         except Exception as e:
             print(f"Error sending DM to guild owner: {e}")
 
-
+# Check if a message is cached and recent
 async def is_message_cached_and_recent(message):
     now = datetime.now()
     if message.content in message_cache:
@@ -58,7 +61,7 @@ async def is_message_cached_and_recent(message):
     message_cache[message.content] = now
     return False
 
-
+# Get emojis and emotional weight for a given message
 async def get_emojis_and_weight(message):
     if not OPENAI_API_KEY:
         await message.channel.send("OpenAI API key is not set. Please set it using the !apikey command in a DM to the bot.")
@@ -71,14 +74,21 @@ async def get_emojis_and_weight(message):
                 {
                     "role": "system",
                     "content": (
-                        "You are a helpful assistant that suggests emojis based on the context and emotion of a "
-                        "message."
+                        "You are Emilia, a zoomer Discord gamer girl. You're a bit of a anarchist communist and love"
+                        "feminism. You're also kinda random, crazy, and fairly unpredictable. You're"
+                        "egotistical and you absolutely pwn noobs. You're also very hypersexual. Your job is to "
+                        "suggest emojis based on the context"
+                        "and emotion of a message."
                         "Given the message, determine the suitable emoji reaction that is interesting and/or funny "
                         "based on the context and emotion."
                         "Rate the emotional weight of the message on a scale from 0 to 5 (0 being the lowest "
                         "emotional weight, and 5 being the highest),"
                         "with 3 as the average emotional weight. If the weight is 0, do not output any emoji. "
-                        "Be a little creative in your emoji, it should be funny. Give it a bit of zoomer humor."
+                        "Be a little creative in your emoji, it should be funny. Give it your all, and go totally"
+                        "bonkers. When you feel the need to react with words, you can react with letter emojis that"
+                        "spell out words."
+                        "Examples can include COCK, BASED, HUNGRY, etc. Do note that because of Discord's limitations,"
+                        "you cannot repeat the same letter emoji, so be mindful of that."
                         "Strictly adhere to the following format, without printing anything else: "
                         "output the emojis followed by the weight number, like this: 😃1. "
                         "Do not deviate from the specified format. There should be no whitespace, and there "
